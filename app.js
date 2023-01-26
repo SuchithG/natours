@@ -1,10 +1,11 @@
 const fs = require("fs");
 const express = require("express");
+const morgan = require("morgan");
 
-const port = 3003;
-
+// 1) MIDDLEWARES
 const app = express();
 
+app.use(morgan("dev"));
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -21,6 +22,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/starter/dev-data/data/tours-simple.json`)
 );
 
+// 2) ROUTE HANDLERS
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
@@ -111,12 +113,18 @@ const deleteTour = (req, res) => {
 // app.patch("/api/v1/tours/:id", updateTour );
 // app.delete("/api/v1/tours/:id", deleteTour);
 
+// 3) ROUTES
+
 app.route("/api/v1/tours").get(getAllTours).post(createTour);
 app
   .route("/api/v1/tours/:id")
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+// 4) START SERVER
+
+const port = 3003;
 
 app.listen(port, () => {
   console.log(`App is running on port ${port}...`);
